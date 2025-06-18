@@ -22,7 +22,8 @@ class SportsHighlightRecorder:
         self.HIGHLIGHTS_DIR = "/home/pi/sports-recorder/highlights"
         
         # Video buffer - stores frames
-        self.frame_buffer = deque(maxsize=self.BUFFER_SECONDS * self.FPS)
+        self.frame_buffer = deque()
+        self.max_buffer_size = self.BUFFER_SECONDS * self.FPS
         self.recording = False
         self.camera = None
         
@@ -94,6 +95,10 @@ class SportsHighlightRecorder:
             
             # Store frame with timestamp in circular buffer
             self.frame_buffer.append((frame.copy(), timestamp))
+            
+            # Maintain buffer size limit
+            if len(self.frame_buffer) > self.max_buffer_size:
+                self.frame_buffer.popleft()
             
             frame_count += 1
             if frame_count % (self.FPS * 10) == 0:  # Every 10 seconds
