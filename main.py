@@ -46,36 +46,40 @@ class SportsHighlightRecorder:
         """Initialize the USB camera"""
         print("Initializing camera...")
         
-        # Try different camera indices
-        for i in range(3):
-            print(f"Trying camera index {i}...")
-            self.camera = cv2.VideoCapture(i)
-            if self.camera.isOpened():
-                print(f"Camera found at index {i}")
-                break
-            else:
-                print(f"Camera index {i} failed")
-                if self.camera:
-                    self.camera.release()
-        else:
-            print("No camera found!")
-            return False
+        # Try different backends and camera indices
+        backends = [cv2.CAP_V4L2, cv2.CAP_ANY]
         
-        if not self.camera.isOpened():
-            print("ERROR: Could not open camera!")
-            return False
+        for backend in backends:
+            backend_name = "V4L2" if backend == cv2.CAP_V4L2 else "ANY"
+            print(f"Trying backend: {backend_name}")
             
+            for i in range(3):
+                print(f"  Trying camera index {i}...")
+                try:
+                    self.camera = cv2.VideoCapture(i, backend)
+                    # Set a timeout by trying to read immediately
+                    ret, _ = self.camera.read()
+                    if ret:
+                        print(f"Camera found at index {i} with {backend_name}")
+                        return self.setup_camera_properties()
+                    else:
+                        print(f"  Camera index {i} opened but no frame")
+                        self.camera.release()
+                except Exception as e:
+                    print(f"  Camera index {i} failed: {e}")
+                    if self.camera:
+                        self.camera.release()
+        
+        print("No working camera found!")
+        return False
+    
+    def setup_camera_properties(self):
+        """Configure camera properties"""
         # Set camera properties
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.RESOLUTION[0])
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.RESOLUTION[1])
         self.camera.set(cv2.CAP_PROP_FPS, self.FPS)
         
-        # Test camera
-        ret, frame = self.camera.read()
-        if not ret:
-            print("ERROR: Could not read from camera!")
-            return False
-            
         print(f"Camera initialized: {self.RESOLUTION[0]}x{self.RESOLUTION[1]} @ {self.FPS}fps")
         return True
     
