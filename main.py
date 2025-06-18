@@ -19,7 +19,7 @@ class SportsHighlightRecorder:
         self.BUFFER_SECONDS = 120  # 2 minutes
         self.FPS = 15  # Lower FPS for testing (saves storage)
         self.RESOLUTION = (640, 480)  # Lower resolution for testing
-        self.HIGHLIGHTS_DIR = "/home/pi/sports-recorder/highlights"
+        self.HIGHLIGHTS_DIR = "/home/enigma/sports-recorder/highlights"
         
         # Video buffer - stores frames
         self.frame_buffer = deque()
