@@ -45,7 +45,21 @@ class SportsHighlightRecorder:
     def initialize_camera(self):
         """Initialize the USB camera"""
         print("Initializing camera...")
-        self.camera = cv2.VideoCapture(0)
+        
+        # Try different camera indices
+        for i in range(3):
+            print(f"Trying camera index {i}...")
+            self.camera = cv2.VideoCapture(i)
+            if self.camera.isOpened():
+                print(f"Camera found at index {i}")
+                break
+            else:
+                print(f"Camera index {i} failed")
+                if self.camera:
+                    self.camera.release()
+        else:
+            print("No camera found!")
+            return False
         
         if not self.camera.isOpened():
             print("ERROR: Could not open camera!")
