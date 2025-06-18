@@ -15,7 +15,7 @@ import RPi.GPIO as GPIO
 class SportsHighlightRecorder:
     def __init__(self):
         # Configuration
-        self.BUTTON_PIN = 18
+        self.BUTTON_PIN = 2
         self.BUFFER_SECONDS = 120  # 2 minutes
         self.FPS = 15  # Lower FPS for testing (saves storage)
         self.RESOLUTION = (640, 480)  # Lower resolution for testing
@@ -40,7 +40,7 @@ class SportsHighlightRecorder:
         # Add interrupt for button press
         GPIO.add_event_detect(self.BUTTON_PIN, GPIO.FALLING, 
                             callback=self.button_pressed, bouncetime=500)
-        print("GPIO setup complete - Button ready on GPIO 18")
+        print("GPIO setup complete - Button ready on GPIO 2")
     
     def initialize_camera(self):
         """Initialize the USB camera"""
